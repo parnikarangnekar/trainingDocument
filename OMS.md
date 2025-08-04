@@ -145,7 +145,8 @@ OMS updates:
 | T-shirt (x2)    | Store 22     | SRK5678PQR  | Delivered    | 1 Returned         |
 
 ---
-
+## Data Model for Order creation in OMS
+[Order Data Model](DataModel/OrderDataModel.md)
 ## Summary
 
 OMS handled the full lifecycle:
