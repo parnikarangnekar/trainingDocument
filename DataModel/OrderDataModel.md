@@ -25,7 +25,7 @@ This order is ingested into **Hotwax OMS**, which stores data across multiple **
 
 | orderId   | externalId    | salesChannelEnumId | statusId       |
 |-----------|---------------|--------------------|----------------|
-| ORDER1001 | SHOP12345678  | SCP_SHOPIFY_APP    | ORDER_CREATED  |
+| ORDER1001 | SHOP12345678  | WEB_SALES          | ORDER_CREATED  |
 
 ---
 
