@@ -28,7 +28,7 @@ A [WMS](wms.md) helps track inventory levels, stock movements, and storage acros
 
 ## 4. Order Management System (OMS)
  
-The [OMS](oms.md) sits between the channels (online/offline) and fulfillment centers. It allocates inventory, splits orders, handles cancellations/returns, and provides full order lifecycle tracking.  
+The [OMS](OMS.md) sits between the channels (online/offline) and fulfillment centers. It allocates inventory, splits orders, handles cancellations/returns, and provides full order lifecycle tracking.  
 **e.g., HotWax Commerce OMS**
 
 ---
