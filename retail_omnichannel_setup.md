@@ -1,10 +1,14 @@
-# Taking a Retail Brand Omnichannel: What You Need
+# What Every Retailer Needs to Go Omnichannel
+
+In today’s retail landscape, customers no longer shop through just one channel. They might discover a product on Instagram, compare prices on a website, and then walk into a store to try it on.
+
+This shift in behavior has made it essential for retailers to adopt an omnichannel approach—a strategy that connects online and offline shopping experiences into one unified journey.
 
 When a retailer decides to expand their business into an omnichannel setup, the goal is to provide a seamless shopping experience across both online and offline touchpoints. To do this effectively, they need to integrate several systems and tools. Here's a breakdown of the essentials:
 
 ---
 
-## 1. E-commerce Platform  
+## [1.E-commerce Platform](shopify.md)
 To sell online, the retailer needs an e-commerce platform that allows them to manage products, customers, and orders.  
 **e.g., Shopify**
 
@@ -16,13 +20,14 @@ For physical stores, a POS system is required to manage in-store transactions, s
 
 ---
 
-## 3. Warehouse Management System (WMS)  
+## [3. Warehouse Management System (WMS)](wms.md)  
 A WMS helps track inventory levels, stock movements, and storage across warehouses and retail locations.  
 **e.g., NetSuite WMS**
 
 ---
 
-## 4. Order Management System (OMS)  
+## [4. Order Management System (OMS)](oms.md)
+ 
 The OMS sits between the channels (online/offline) and fulfillment centers. It allocates inventory, splits orders, handles cancellations/returns, and provides full order lifecycle tracking.  
 **e.g., HotWax Commerce OMS**
 
