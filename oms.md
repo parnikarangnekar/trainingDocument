@@ -157,7 +157,7 @@ OMS handled the full lifecycle:
 - Invoicing and delivery
 - Return and refund process
 
-## **The Role of the Order Management System (OMS)**
+### **The Role of the Order Management System (OMS)**
 
 The OMS is the backbone of NotNaked’s omnichannel capabilities, serving multiple critical functions:
 1. **Order Aggregation and Processing**
