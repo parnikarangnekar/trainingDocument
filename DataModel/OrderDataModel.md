@@ -4,8 +4,9 @@
 
 A customer places a multi-line order on **Shopify (mobile app)**. The order contains:
 
-- SKU 1: `TSHIRT-RED-M`, Quantity: 2  
-- SKU 2: `JEANS-BLUE-32`, Quantity: 1  
+- 1x Blue Denim Jacket (`DJ-BL-01`)
+- 2x White Graphic T-shirts (`GT-WH-02`)
+- 1x Black Sneakers (`SNK-BK-04`)
 
 This order is ingested into **Hotwax OMS**, which stores data across multiple **UDM (Universal Data Model)** entities.
 
@@ -34,10 +35,11 @@ This order is ingested into **Hotwax OMS**, which stores data across multiple **
 **Created When**: Immediately after `OrderHeader` is created.  
 **Note**: One order may have multiple `OrderItem` entries.
 
-| orderId   | orderItemSeqId | productId        | quantity |
-|-----------|----------------|------------------|----------|
-| ORDER1001 | 00001          | TSHIRT-RED-M     | 2        |
-| ORDER1001 | 00002          | JEANS-BLUE-32    | 1        |
+| orderId   | orderItemSeqId | productId    | quantity |
+|-----------|----------------|--------------|----------|
+| ORDER1001 | 00001          | DJ-BL-01     | 1        |
+| ORDER1001 | 00002          | GT-WH-02     | 2        |
+| ORDER1001 | 00003          | SNK-BK-04    | 1        |
 
 ---
 
@@ -46,25 +48,27 @@ This order is ingested into **Hotwax OMS**, which stores data across multiple **
 **Purpose**: Represents shipment grouping.  
 **Created When**: 
 - Initially at order creation with a placeholder facility (`NA_FACILITY`).
-- After **brokering**, a new OISG is created for each fulfillment facility.
-**Note**: All items that will be shipped together in a single shipment are grouped under the same OrderItemShipGroup.
-This grouping is based on shared shipping attributes such as delivery address, carrier, shipping facility and shipment method. If an order contains items that require different handling or delivery addresses, separate OrderItemShipGroup records are created for each shipment group.
+- After **brokering**, a new OISG is created for each fulfillment facility.  
+**Note**: All items that will be shipped together in a single shipment are grouped under the same OrderItemShipGroup. This grouping is based on shared shipping attributes such as delivery address, carrier, shipping facility, and shipment method. If an order contains items that require different handling or delivery addresses, separate OrderItemShipGroup records are created for each shipment group.
 
 **Before Brokering**:
+
 | orderId   | shipGroupSeqId | facilityId   | carrierPartyId | shipmentMethodTypeId |
 |-----------|----------------|--------------|----------------|-----------------------|
 | ORDER1001 | 00001          | NA_FACILITY  | NA             | STANDARD              |
 
 **After Brokering**:  
-- OMS allocates items to a real warehouse (`DELHI_DC`, for example).
-- A new ship group (`00002`) is created to represent the actual shipment from this warehouse.
+OMS checks inventory and allocates:
+- Jacket → Warehouse A (Mumbai)
+- T-shirts → Store 22 (Delhi)
+- Sneakers → Warehouse A (Mumbai)
+
+So, two ship groups are created:
 
 | orderId   | shipGroupSeqId | facilityId | carrierPartyId | shipmentMethodTypeId |
 |-----------|----------------|------------|----------------|-----------------------|
-| ORDER1001 | 00002          | DELHI_DC   | BLUEDART       | STANDARD              |
-
-> The new `shipGroupSeqId` reflects a **real-world shipment**, which can now be assigned to a carrier and delivery timeline.
-
+| ORDER1001 | 00002          | MUMBAI_DC  | BLUEDART       | STANDARD              |
+| ORDER1001 | 00003          | DELHI_STR22| DTDC           | STANDARD              |
 
 ---
 
@@ -72,18 +76,21 @@ This grouping is based on shared shipping attributes such as delivery address, c
 
 **Purpose**: Maps order items to their shipping groups.
 
-| orderId   | orderItemSeqId | shipGroupSeqId | quantity |
-|-----------|----------------|----------------|----------|
-| ORDER1001 | 00001          | 00001          | 2        |
-| ORDER1001 | 00002          | 00001          | 1        |
-
-**After Brokering**: 
-Remaps order items from `00001` (placeholder/virtual facility) to actual shipment group `00002`.
+**Before Brokering**:
 
 | orderId   | orderItemSeqId | shipGroupSeqId | quantity |
 |-----------|----------------|----------------|----------|
-| ORDER1001 | 00001          | 00002          | 2        |
-| ORDER1001 | 00002          | 00002          | 1        |
+| ORDER1001 | 00001          | 00001          | 1        |
+| ORDER1001 | 00002          | 00001          | 2        |
+| ORDER1001 | 00003          | 00001          | 1        |
+
+**After Brokering**:
+
+| orderId   | orderItemSeqId | shipGroupSeqId | quantity |
+|-----------|----------------|----------------|----------|
+| ORDER1001 | 00001          | 00002          | 1        |
+| ORDER1001 | 00002          | 00003          | 2        |
+| ORDER1001 | 00003          | 00002          | 1        |
 
 ---
 
@@ -93,8 +100,10 @@ Remaps order items from `00001` (placeholder/virtual facility) to actual shipmen
 
 | orderId   | orderItemSeqId | shipGroupSeqId | quantity | reservedFacilityId |
 |-----------|----------------|----------------|----------|---------------------|
-| ORDER1001 | 00001          | 00002          | 2        | DELHI_DC            |
-| ORDER1001 | 00002          | 00002          | 1        | DELHI_DC            |
+| ORDER1001 | 00001          | 00002          | 1        | MUMBAI_DC           |
+| ORDER1001 | 00002          | 00003          | 2        | DELHI_STR22         |
+| ORDER1001 | 00003          | 00002          | 1        | MUMBAI_DC           |
+
 ---
 
 ## Summary of Flow
@@ -105,5 +114,7 @@ Remaps order items from `00001` (placeholder/virtual facility) to actual shipmen
 4. A default `OrderItemShipGroup` (with `NA` facility) is created before brokering.
 5. `OrderItemShipGrpAssoc` links each item to the ship group.
 6. After brokering:
-   - `facilityId` is updated in `OrderItemShipGroup`.
+   - Items are split based on inventory location.
+   - Separate `OrderItemShipGroup` entries are created for each fulfillment center.
+   - `OrderItemShipGrpAssoc` is updated.
    - `OrderItemShipGrpInvRes` is created to reflect reserved inventory.
